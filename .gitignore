@@ -1,0 +1,9 @@
+*.pyc
+*.det
+*.ckpt-250000.*
+*.npy
+*.pb
+venv/
+.idea/
+credentials.py
+*.DS_Store
