@@ -1,5 +1,4 @@
 '''
-@Author: David Vu
 Run the pretrained model to extract 128D face features
 '''
 

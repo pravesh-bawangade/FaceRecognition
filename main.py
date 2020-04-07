@@ -6,6 +6,7 @@ main.py
 To input new user:
 main.py --mode "input"
 
+@credit : David Vu
 '''
 import os
 import smtplib
