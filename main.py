@@ -136,18 +136,18 @@ def findPeople(features_arr, positions, frame, thres = 0.6, percent_thres = 70):
     :return: person name and percentage
     '''
     f = open('./facerec_128D.txt','r')
-    data_set = json.loads(f.read());
-    returnRes = [];
+    data_set = json.loads(f.read())
+    returnRes = []
     for (i,features_128D) in enumerate(features_arr):
-        result = "Unknown";
+        result = "Unknown"
         smallest = sys.maxsize
         for person in data_set.keys():
-            person_data = data_set[person][positions[i]];
+            person_data = data_set[person][positions[i]]
             for data in person_data:
                 distance = np.sqrt(np.sum(np.square(data-features_128D)))
                 if(distance < smallest):
-                    smallest = distance;
-                    result = person;
+                    smallest = distance
+                    result = person
         percentage =  min(100, 100 * thres / smallest)
         if percentage <= percent_thres :
             result = "Unknown"

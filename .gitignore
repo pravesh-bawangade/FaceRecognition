@@ -7,3 +7,4 @@ venv/
 .idea/
 credentials.py
 *.DS_Store
+facerec_128D.txt
