@@ -32,7 +32,7 @@ A simple working facial recognition program.
     `python3 main.py --mode "input"` to add new user. Start turning left, right, up, down after inputting the new name. Turn slowly to avoid blurred images
 
         
-### Flags:
+## Flags:
    `--mode "input"` to add new user into the data set
    `--type "http:\\IpAddress:port\video"` to set video stream input from url. Default: 0 (Laptop camera)
     
