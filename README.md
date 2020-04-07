@@ -11,7 +11,7 @@ A simple working facial recognition program.
         
     3. In terminal do, source ./venv/bin/activate 
         
-        then navigate to FaceRec folder location
+        then navigate to FaceRecognition folder location
 
     4. Run main.py
 
@@ -34,12 +34,11 @@ A simple working facial recognition program.
         
 ### Flags:
    `--mode "input"` to add new user into the data set
+   `--type "http:\\IpAddress:port\video"` to set video stream input from url. Default: 0 (Laptop camera)
     
 
 ## General Information:
-Project: Facial Recogition
-
-This is a simple minified version of a bigger project I was working on this summer.
+Project: Facial Recogition with email feature if intruder is detected.
 
 ### Info on the models I used:
 
