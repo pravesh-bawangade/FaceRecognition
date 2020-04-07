@@ -34,10 +34,12 @@ A simple working facial recognition program.
         
 ## Flags:
    `--mode "input"` to add new user into the data set
+   
    `--type "http:\\IpAddress:port\video"` to set video stream input from url. Default: 0 (Laptop camera)
     
 
 ## General Information:
+
 Project: Facial Recogition with email feature if intruder is detected.
 
 ### Info on the models I used:
