@@ -90,32 +90,53 @@ def camera_recog(camera_type = 0):
     print("[INFO] camera sensor warming up...")
     vs = cv2.VideoCapture(camera_type) #get input from webcam
     detect_time = time.time()
+    tracker = cv2.TrackerKCF_create()
+    rects = []
+    recog_data = None
+    key = None
     while True:
+
         _,frame = vs.read();
         #u can certainly add a roi here but for the sake of a demo i'll just leave it as simple as this
-        rects, landmarks = face_detect.detect_face(frame,80);#min face size is set to 80x80
-        aligns = []
-        positions = []
 
-        for (i, rect) in enumerate(rects):
-            aligned_face, face_pos = aligner.align(160,frame,landmarks[:,i])
-            if len(aligned_face) == 160 and len(aligned_face[0]) == 160:
-                aligns.append(aligned_face)
-                positions.append(face_pos)
-            else: 
-                print("Align face failed") #log        
-        if(len(aligns) > 0):
-            features_arr = extract_feature.get_features(aligns)
-            recog_data = findPeople(features_arr,positions, frame)
-            for (i,rect) in enumerate(rects):
-                cv2.rectangle(frame,(rect[0],rect[1]),(rect[2],rect[3]),(255,0,0)) #draw bounding box for the face
-                cv2.putText(frame,recog_data[i][0]+" - "+str(recog_data[i][1])+"%",(rect[0],rect[1]),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),1,cv2.LINE_AA)
+        if (not (len(rects) == 0)) and (not ((done - detect_time) >= 5.0)):
+            (success, box) = tracker.update(frame)
+            if success:
+                (x, y, w, h) = [int(v) for v in box]
+                cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0)) #draw bounding box for the face
+                cv2.putText(frame,recog_data[i][0]+" - "+str(recog_data[i][1])+"%",(x,y),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),1,cv2.LINE_AA)
+            cv2.imshow("Frame", frame)
+            key = cv2.waitKey(1) & 0xFF
 
+        else:
 
-        cv2.imshow("Frame",frame)
-        key = cv2.waitKey(1) & 0xFF
+            rects, landmarks = face_detect.detect_face(frame, 80)  # min face size is set to 80x80
+            aligns = []
+            positions = []
+
+            for (i, rect) in enumerate(rects):
+                aligned_face, face_pos = aligner.align(160, frame, landmarks[:, i])
+                if len(aligned_face) == 160 and len(aligned_face[0]) == 160:
+                    aligns.append(aligned_face)
+                    positions.append(face_pos)
+                else:
+                    print("Align face failed")  # log
+            if (len(aligns) > 0):
+                features_arr = extract_feature.get_features(aligns)
+                recog_data = findPeople(features_arr, positions, frame)
+
+            print(rects)
+
+            if not (len(rects) == 0):
+                tracker = cv2.TrackerKCF_create()
+                tracker.init(frame, (rects[0][0], rects[0][1], rects[0][2]-rects[0][0], rects[0][3]-rects[0][1]))
+            detect_time = time.time()
+
         if key == ord("q"):
             break
+        done = time.time()
+
+
 '''
 facerec_128D.txt Data Structure:
 {
