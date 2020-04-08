@@ -25,6 +25,7 @@ import json
 import time
 import numpy as np
 import credentials as cr
+from imutils.video import FPS
 
 TIMEOUT = 10 #10 seconds
 
@@ -94,17 +95,25 @@ def camera_recog(camera_type = 0):
     rects = []
     recog_data = None
     key = None
+    fps = None
+    diff = 0
     while True:
 
         _,frame = vs.read();
-        #u can certainly add a roi here but for the sake of a demo i'll just leave it as simple as this
 
-        if (not (len(rects) == 0)) and (not ((done - detect_time) >= 5.0)):
+        if (not (len(rects) == 0)) and (not (diff) >= 5.0):
             (success, box) = tracker.update(frame)
+
             if success:
                 (x, y, w, h) = [int(v) for v in box]
                 cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0)) #draw bounding box for the face
-                cv2.putText(frame,recog_data[i][0]+" - "+str(recog_data[i][1])+"%",(x,y),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),1,cv2.LINE_AA)
+                cv2.putText(frame,recog_data[i][0]+" - "+str(recog_data[i][1])+"%",(x,y),
+                            cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),1,cv2.LINE_AA)
+
+            fps.update()
+            fps.stop()
+            cv2.putText(frame, str(fps.fps()), (10, 50),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 1, cv2.LINE_AA)
             cv2.imshow("Frame", frame)
             key = cv2.waitKey(1) & 0xFF
 
@@ -131,10 +140,12 @@ def camera_recog(camera_type = 0):
                 tracker = cv2.TrackerKCF_create()
                 tracker.init(frame, (rects[0][0], rects[0][1], rects[0][2]-rects[0][0], rects[0][3]-rects[0][1]))
             detect_time = time.time()
+        fps = FPS().start()
 
         if key == ord("q"):
             break
         done = time.time()
+        diff = (done - detect_time)
 
 
 '''
