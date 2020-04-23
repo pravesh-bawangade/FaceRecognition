@@ -9,4 +9,5 @@ credentials.py
 *.DS_Store
 facerec_128D.txt
 test/
+video/
 

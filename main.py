@@ -71,8 +71,9 @@ def rescale_frame(frame, percent=75):
 def main(args):
     mode = args.mode
     camera_type = args.type
+    record = args.rec
     if(mode == "camera"):
-        camera_recog(camera_type)
+        camera_recog(camera_type,record=record)
     elif mode == "input":
         create_manual_data(camera_type)
     else:
@@ -87,9 +88,17 @@ Images from Video Capture -> detect faces' regions -> crop those faces and align
     (Distance threshold is 0.6, percentage threshold is 70%)
     
 '''
-def camera_recog(camera_type = 0):
+def camera_recog(camera_type = 0, record = False):
     print("[INFO] camera sensor warming up...")
     vs = cv2.VideoCapture(camera_type) #get input from webcam
+
+    if record:
+        frame_width = int(vs.get(3))
+        frame_height = int(vs.get(4))
+
+        out = cv2.VideoWriter('output_face.avi', cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), 22,
+                              (frame_width, frame_height))
+
     detect_time = time.time()
     tracker = cv2.TrackerKCF_create()
     rects = []
@@ -114,6 +123,7 @@ def camera_recog(camera_type = 0):
             fps.stop()
             cv2.putText(frame, str(fps.fps()), (10, 50),
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 255), 1, cv2.LINE_AA)
+            out.write(frame)
             cv2.imshow("Frame", frame)
             key = cv2.waitKey(1) & 0xFF
 
@@ -134,7 +144,7 @@ def camera_recog(camera_type = 0):
                 features_arr = extract_feature.get_features(aligns)
                 recog_data = findPeople(features_arr, positions, frame)
 
-            print(rects)
+            #print(rects)
 
             if not (len(rects) == 0):
                 tracker = cv2.TrackerKCF_create()
@@ -147,6 +157,9 @@ def camera_recog(camera_type = 0):
         done = time.time()
         diff = (done - detect_time)
 
+    vs.release()
+    out.release()
+    cv2.destroyAllWindows()
 
 '''
 facerec_128D.txt Data Structure:
@@ -233,6 +246,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", type=str, help="Run camera recognition", default="camera")
     parser.add_argument("--type", type=str, help="camera type", default=0)
+    parser.add_argument("--rec", type=bool, help="record", default=False)
     args = parser.parse_args(sys.argv[1:])
     FRGraph = FaceRecGraph()
     MTCNNGraph = FaceRecGraph()
