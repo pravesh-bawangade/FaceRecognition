@@ -62,3 +62,4 @@ OpenCV: Image processing (VideoCapture, resizing,..)
 
 ## Credits:
     -  Pretrained models from: https://github.com/davidsandberg/facenet
+    -  Implementation inspired from : https://github.com/vudung45/FaceRec
